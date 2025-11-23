@@ -2,7 +2,7 @@
 
 A high-performance, multilingual Retrieval-Augmented Generation (RAG) system combining FAISS, Groq LLaMA models, Tavily web search, and robust preprocessing + corrective filtering to deliver fast, accurate, and context-grounded answers.
 
-Designed as part of an advanced AI hiring task, this system demonstrates production-level architectural design, retrieval quality control, and multilingual capability.
+Designed as part of an advanced AI task, this system demonstrates production-level architectural design, retrieval quality control, and multilingual capability.
 
 # 🌟 Features
 
@@ -227,9 +227,7 @@ rag_system/static/index.html
 
 # 🎯 API Endpoints
 POST /ask-question
-GET /health
 Send a question and receive an answer:
-
 {
   "query": "Who's the Weeknd?!"
 }
@@ -240,6 +238,21 @@ Response
   "context_used": [...],
   "retrieval_time_s": 13
 }
+
+GET /health
+{
+  "status": "ok",
+  "rag_service": "initialized"
+}
+
+GET /evaluate?samples=100&answer_type=both
+{
+  "accuracy": ..,
+  "precision": .. ,
+  "recall": ..,
+  "num_samples": 100
+}
+
 
 🔍 How It Works
 🔹 1. Query Preprocessing
