@@ -1,0 +1,11 @@
+{
+  "labels":[
+    "easy",
+    "medium",
+    "hard",
+    "too hard",
+    "too easy"
+  ],
+  "threshold":0.0,
+  "positive_label":null
+}

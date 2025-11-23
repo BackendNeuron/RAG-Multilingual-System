@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multilingual RAG System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .metrics-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #eef7ff;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .section-title {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Multilingual RAG System</h2>
+
+        <!-- Question input -->
+        <textarea id="query" rows="4" placeholder="Enter your question here..."></textarea>
+        <button onclick="askQuestion()">Ask Question</button>
+
+        <!-- Response output -->
+        <div class="response" id="response"></div>
+
+        <!-- Evaluation Section -->
+        <div class="section-title">Model Evaluation</div>
+        <button onclick="runEvaluation()">Run Evaluation</button>
+        <div class="metrics-box" id="evalResults">Evaluation results will appear here...</div>
+    </div>
+
+<script>
+    // --- ASK QUESTION ---
+    async function askQuestion() {
+        const query = document.getElementById("query").value;
+        const responseDiv = document.getElementById("response");
+        responseDiv.textContent = "Loading...";
+
+        try {
+            const res = await fetch("/ask-question", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                responseDiv.textContent = `Error: ${err.detail}`;
+                return;
+            }
+
+            const data = await res.json();
+            responseDiv.textContent =
+                `Response:\n${data.response}\n\nLatency: ${data.latency}s`;
+
+            // --- Play TTS audio if available ---
+            if (data.audio_base64) {
+                const audio = new Audio("data:audio/mp3;base64," + data.audio_base64);
+                audio.play();
+            }
+
+        } catch (err) {
+            responseDiv.textContent = `Error: ${err.message}`;
+        }
+    }
+
+    // --- RUN EVALUATION ---
+    async function runEvaluation() {
+        const evalDiv = document.getElementById("evalResults");
+        evalDiv.textContent = "Running evaluation... (this may take a moment)";
+
+        try {
+            const res = await fetch("/evaluate?answer_type=both&samples=10&random_sample=false");
+
+            if (!res.ok) {
+                const err = await res.json();
+                evalDiv.textContent = `Error: ${err.detail}`;
+                return;
+            }
+
+            const data = await res.json();
+
+            const shortM = data.metrics.short;
+            const longM = data.metrics.long;
+
+            evalDiv.innerHTML = `
+                <b>Answer Type:</b> ${data.answer_type}<br><br>
+
+                <b>Short Answer Metrics:</b><br>
+                Precision: ${shortM.precision.toFixed(3)}<br>
+                BLEU: ${shortM.bleu.toFixed(3)}<br>
+                ROUGE-L: ${shortM.rouge_l.toFixed(3)}<br><br>
+
+                <b>Long Answer Metrics:</b><br>
+                Precision: ${longM.precision.toFixed(3)}<br>
+                BLEU: ${longM.bleu.toFixed(3)}<br>
+                ROUGE-L: ${longM.rouge_l.toFixed(3)}<br><br>
+
+                <b>Sample Detailed Results (first 3):</b><br>
+                <pre>${JSON.stringify(data.detailed.slice(0,3), null, 2)}</pre>
+            `;
+        } catch (err) {
+            evalDiv.textContent = `Error: ${err.message}`;
+        }
+    }
+</script>
+
+</body>
+</html>

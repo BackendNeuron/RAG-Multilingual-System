@@ -1,0 +1,38 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+env/
+venv/
+
+# Environment files
+.env
+.env.*   # optional, in case you have multiple env files
+
+# Data / embeddings / performance / processed files
+data/embeddings/faiss_index.bin
+data/embeddings/metadata_mapping.json
+data/performance/exact_cache.json
+
+# Optionally exclude raw or large CSVs
+data/raw/
+data/processed/Natural-Questions*.csv
+data/chunks/semantic_chunked_dataset.json
+data/peformance/exact_cache.json
+# IDE / system files
+.vscode/
+.idea/
+.DS_Store
+
+# Jupyter checkpoints
+*.ipynb_checkpoints
+
+# Logs
+*.log
+
+# Node/JS (if any)
+node_modules/
+dist/

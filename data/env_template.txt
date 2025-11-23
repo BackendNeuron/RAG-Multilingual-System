@@ -1,0 +1,10 @@
+RETRIEVER_FAISS_PATH=path/to/faiss_index.bin
+RETRIEVER_METADATA_PATH=path/to/metadata_mapping.json
+EMBEDDING_MODEL_NAME=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+GROQ_API_KEY=your_groq_api_key_here
+LLM_MODEL_NAME=llama-3.3-70b-versatile
+PERFORMANCE_CACHE_PATH=path/to/exact_cache.json
+TAVILY_API_KEY=your_tavily_api_key_here
+USE_GPU=0
+ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
+CSV_PATH=path_to_csv_with_metadata
